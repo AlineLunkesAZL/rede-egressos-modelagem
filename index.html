@@ -211,6 +211,15 @@ a.btn{text-decoration:none;display:inline-block}
 .fontes li{padding:6px 0;border-bottom:1px solid var(--line);font-size:.92rem}
 .fontes li:last-child{border-bottom:none}
 @media (max-width:860px){.vagas-layout{grid-template-columns:1fr}}
+.about{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:18px;align-items:start}
+.about h3{margin:0 0 8px;font-size:1.15rem}
+.about .card > h3:not(:first-child){margin-top:18px}
+.about p,.about li{font-family:var(--serif);line-height:1.6}
+.about ul{margin:0;padding-left:20px}
+.about li{margin:4px 0}
+.origin{font-family:var(--sans) !important;font-size:.9rem !important;margin:-6px 0 18px !important}
+footer{line-height:1.7}
+@media (max-width:860px){.about{grid-template-columns:1fr}}
 footer{border-top:1px solid var(--line);padding:20px 0 40px;color:var(--muted);font-size:.88rem}
 
 @media (max-width:860px){
@@ -225,6 +234,7 @@ footer{border-top:1px solid var(--line);padding:20px 0 40px;color:var(--muted);f
   <div>
     <h1>Rede de Egressos da Modelagem Computacional</h1>
     <p>Quem passou pelos programas de pós-graduação em modelagem computacional do Brasil: onde mora, onde trabalha, que caminhos seguiu e o que pode contar para quem vem depois.</p>
+    <p class="origin">Iniciativa surgida no <b>ENMC/ECTM 2026</b> · organização: Aline Zuliani Lunkes · <a href="#sobre" data-go="sobre">saiba mais</a></p>
     <div class="kpis" aria-live="polite">
       <div class="kpi"><b id="k-total">0</b><span>egressos na rede</span></div>
       <div class="kpi"><b id="k-area">–</b><span>trabalham na área</span></div>
@@ -250,6 +260,7 @@ footer{border-top:1px solid var(--line);padding:20px 0 40px;color:var(--muted);f
     <button role="tab" data-tab="painel" aria-selected="false">Painel</button>
     <button role="tab" data-tab="programas" aria-selected="false">Programas</button>
     <button role="tab" data-tab="cadastro" aria-selected="false">Meu cadastro</button>
+    <button role="tab" data-tab="sobre" aria-selected="false">Sobre</button>
     <div class="auth" id="auth"></div>
   </div>
 </nav>
@@ -372,7 +383,7 @@ footer{border-top:1px solid var(--line);padding:20px 0 40px;color:var(--muted);f
   <!-- PROGRAMAS -->
   <section class="panel" id="tab-programas" hidden>
     <h2>Programas</h2>
-    <p class="lead">Lista inicial de programas com foco em modelagem computacional. Confira nomes, cursos e notas na Plataforma Sucupira.</p>
+    <p class="lead">Lista inicial de programas com foco em modelagem computacional. Confira nomes, cursos e notas na Plataforma Sucupira. Faltou algum programa? Escreva para <a href="mailto:alinelunkes@unipampa.edu.br?subject=Rede%20de%20Egressos%20-%20incluir%20programa">alinelunkes@unipampa.edu.br</a>.</p>
     <div class="prog-layout">
       <figure class="map-box" style="margin:0">
         <div class="map-ctrl" data-for="prog-map"></div>
@@ -485,10 +496,52 @@ footer{border-top:1px solid var(--line);padding:20px 0 40px;color:var(--muted);f
       <div style="margin-top:12px"><button class="btn small danger" type="button" id="p-del" hidden>Remover meu cadastro</button></div>
     </form>
   </section>
+  <!-- SOBRE -->
+  <section class="panel" id="tab-sobre" hidden>
+    <h2>Sobre a rede</h2>
+    <p class="lead">A Rede de Egressos da Modelagem Computacional reúne quem fez mestrado ou doutorado em programas de pós-graduação da área no Brasil.</p>
+    <div class="about">
+      <div class="card">
+        <h3>Como surgiu</h3>
+        <p>Esta iniciativa surgiu no <b>ENMC/ECTM 2026</b>, a partir da vontade de ajudar os egressos em Modelagem Computacional: conhecer seus caminhos depois da pós, aproximar quem já se formou de quem está se formando e facilitar o acesso a oportunidades de trabalho e pesquisa.</p>
+        <h3>Objetivos</h3>
+        <ul>
+          <li>Mapear onde os egressos moram, onde trabalham e que trajetórias seguiram.</li>
+          <li>Conectar egressos e alunos atuais por meio do fórum e da mentoria.</li>
+          <li>Divulgar bolsas, concursos, vagas e editais da área.</li>
+          <li>Oferecer aos programas de pós-graduação informações para a autoavaliação e o acompanhamento de egressos.</li>
+        </ul>
+      </div>
+      <div class="side-stack">
+        <div class="card">
+          <h3>Organização e contato</h3>
+          <p><b>Aline Zuliani Lunkes</b><br><a href="mailto:alinelunkes@unipampa.edu.br?subject=Rede%20de%20Egressos%20da%20Modelagem%20Computacional">alinelunkes@unipampa.edu.br</a></p>
+          <p class="status">Escreva para sugerir programas, relatar problemas, propor parcerias ou pedir a remoção de dados.</p>
+        </div>
+        <div class="card">
+          <h3>Seus dados</h3>
+          <ul>
+            <li>Só quem entra com conta Google vê os cadastros, o fórum e as oportunidades.</li>
+            <li>Cada pessoa autoriza a exibição dos seus dados e pode editá-los ou removê-los a qualquer momento, na aba Meu cadastro.</li>
+            <li>O mapa mostra apenas a cidade, nunca o endereço.</li>
+            <li>Os dados não são vendidos nem repassados a terceiros. Relatórios para os programas usam números agregados.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Fontes</h3>
+          <p class="status" style="margin:0">Contorno dos estados e lista de municípios com coordenadas: IBGE. Lista de programas: levantamento inicial, a confirmar na Plataforma Sucupira.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
 
 <datalist id="linhas"></datalist>
-<footer class="wrap">Rede aberta de egressos dos programas de pós-graduação em modelagem computacional. Dados informados pelos próprios egressos. Malha municipal: IBGE.</footer>
+<footer class="wrap">
+  <b>Rede de Egressos da Modelagem Computacional</b> · iniciativa surgida no ENMC/ECTM 2026<br>
+  Organização: Aline Zuliani Lunkes · <a href="mailto:alinelunkes@unipampa.edu.br">alinelunkes@unipampa.edu.br</a><br>
+  Dados informados pelos próprios egressos. Mapas e lista de municípios: IBGE.
+</footer>
 
 <script>
 (function(){
