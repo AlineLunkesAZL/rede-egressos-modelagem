@@ -143,6 +143,10 @@ fieldset.step legend{font-stretch:80%;font-weight:750;font-size:1.35rem;padding:
 .opt input:checked + span{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .opt input:focus-visible + span{outline:2px solid var(--accent);outline-offset:2px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+.linha-filter{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:9px 11px;margin-bottom:10px}
+#opt-linha{max-height:300px;overflow-y:auto;padding:2px}
+.add-linha{display:flex;gap:8px;margin-top:12px}
+.add-linha input{flex:1;min-width:0}
 .wiz-actions{display:flex;gap:10px;align-items:center;margin-top:8px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:14px}
 .wiz-actions .spacer{flex:1}
 .citysearch{position:relative}
@@ -311,6 +315,7 @@ footer{border-top:1px solid var(--line);padding:20px 0 40px;color:var(--muted);f
       <div class="card"><h3 style="margin:0">Trabalha na área de formação?</h3><div id="s-areabar"></div></div>
       <div class="card"><h3 style="margin:0">Por programa</h3><div id="s-prog-bars"></div></div>
       <div class="card"><h3 style="margin:0">Por década de titulação</h3><div id="s-ano"></div></div>
+      <div class="card" style="grid-column:1/-1"><h3 style="margin:0">Linhas de pesquisa mais comuns</h3><div id="s-linhas"></div></div>
       <div class="card quotes" style="grid-column:1/-1"><h3 style="margin:0">O que os egressos contaram sobre as dificuldades</h3><div id="s-quotes"></div></div>
     </div>
   </section>
@@ -357,7 +362,11 @@ footer{border-top:1px solid var(--line);padding:20px 0 40px;color:var(--muted);f
         <legend>Sua pesquisa na pós</legend>
         <div class="q"><label class="ql" for="p-orient">Quem foi seu orientador(a)?</label><input id="p-orient" name="orientador" maxlength="160" placeholder="Se teve coorientador, separe com vírgula"></div>
         <div class="q"><label class="ql" for="p-titulo">Título da dissertação ou tese</label><textarea id="p-titulo" name="titulo" maxlength="300" style="min-height:64px"></textarea></div>
-        <div class="q"><label class="ql" for="p-linha">Linha de pesquisa na pós</label><input id="p-linha" name="linha" maxlength="200" list="linhas" placeholder="Comece a digitar ou escolha uma sugestão"></div>
+        <div class="q"><span class="ql" id="l-linha">Linha(s) de pesquisa na pós. Marque quantas quiser.</span>
+          <input id="p-linha-f" type="search" placeholder="Filtrar a lista, ex.: cripto, fluidos, dados…" aria-label="Filtrar linhas de pesquisa" class="linha-filter">
+          <div class="opt" id="opt-linha" aria-labelledby="l-linha"></div>
+          <div class="add-linha"><input id="p-linha-new" maxlength="80" placeholder="Não achou? Escreva outra linha de pesquisa" aria-label="Outra linha de pesquisa"><button class="btn small" type="button" id="p-linha-add">Adicionar</button></div>
+        </div>
       </fieldset>
 
       <fieldset class="step" data-name="Onde mora" hidden>
@@ -466,7 +475,7 @@ const AREA = {sim:"Sim", parcial:"Em parte", nao:"Não"};
 const TEMPOS = ["Já trabalhava antes","Menos de 6 meses","6 a 12 meses","1 a 2 anos","Mais de 2 anos","Ainda estou procurando"];
 const DIFICULDADES = ["Poucas vagas na minha área","Pediam experiência fora da academia","Poucos concursos para docente","Mercado não valoriza mestrado/doutorado","Faltavam habilidades pedidas (programação, nuvem, dados…)","Precisei mudar de cidade ou país","Pouca rede de contatos","Salários abaixo do esperado","Fim da bolsa sem transição","Não tive dificuldades"];
 const MUDOU = {nao:"Não mudou", mercado:"Mudou por causa do mercado", outro:"Mudou por outros motivos"};
-const LINHAS = ["Dinâmica dos fluidos computacional (CFD)","Métodos de elementos finitos","Mecânica computacional dos sólidos","Otimização","Aprendizado de máquina e IA","Ciência de dados","Computação de alto desempenho (HPC)","Problemas inversos","Modelagem de sistemas biológicos","Epidemiologia matemática","Bioinformática","Modelagem ambiental e recursos hídricos","Geofísica computacional","Engenharia de reservatórios e petróleo","Fenômenos de transporte","Processamento de imagens","Finanças computacionais","Sistemas energéticos","Métodos numéricos","Modelagem estocástica"];
+const LINHAS = ["Algoritmos e complexidade","Análise numérica","Aprendizado de máquina e IA","Aprendizado profundo (deep learning)","Bioinformática","Biologia computacional","Ciência de dados","Computação científica","Computação de alto desempenho (HPC)","Computação gráfica e visualização","Computação quântica","Controle e sistemas dinâmicos","Criptografia","Dinâmica dos fluidos computacional (CFD)","Dinâmica molecular","Engenharia de reservatórios e petróleo","Engenharia de software científico","Epidemiologia matemática","Equações diferenciais","Estatística computacional","Fenômenos de transporte","Finanças computacionais","Física computacional","Geofísica computacional","Geoprocessamento e sensoriamento remoto","Inteligência computacional (redes neurais, algoritmos evolutivos)","Mecânica computacional dos sólidos","Medicina computacional e modelagem em saúde","Métodos de elementos finitos","Métodos numéricos","Modelagem ambiental e recursos hídricos","Modelagem climática e meteorológica","Modelagem de sistemas biológicos","Modelagem estocástica","Modelagem multiescala","Otimização","Pesquisa operacional","Problemas inversos","Processamento de imagens e visão computacional","Processamento de linguagem natural","Processamento de sinais","Química computacional","Redes complexas","Segurança da informação","Simulação de eventos discretos","Sistemas energéticos","Teoria dos números computacional"].sort((a,b)=>a.localeCompare(b,"pt"));
 const PAISES = ["Alemanha","Angola","Arábia Saudita","Argentina","Austrália","Áustria","Bélgica","Canadá","Chile","China","Colômbia","Coreia do Sul","Dinamarca","Emirados Árabes Unidos","Espanha","Estados Unidos","Finlândia","França","Índia","Irlanda","Israel","Itália","Japão","México","Moçambique","Noruega","Nova Zelândia","Países Baixos","Paraguai","Peru","Polônia","Portugal","Reino Unido","Suécia","Suíça","Uruguai","Outro"];
 const CATS = ["Geral","Carreira","Vagas","Pesquisa e colaboração","Mentoria","Eventos e fórum anual"];
 
@@ -544,6 +553,17 @@ fillSelect($("#p-pais"), PAISES.map(p=>[p,p]), "Selecione");
 fillSelect($("#nt-cat"), CATS.map(c=>[c,c]));
 { const now=new Date().getFullYear(); fillSelect($("#p-ano"), Array.from({length:now-1979},(_,i)=>{const y=String(now-i);return [y,y];}), "Selecione o ano"); }
 LINHAS.forEach(l=>$("#linhas").append(h("option",{value:l})));
+function addLinhaChip(v,checked){
+  const box=$("#opt-linha"); let inp=[...box.querySelectorAll("input")].find(x=>norm(x.value)===norm(v));
+  if(!inp){ inp=h("input",{type:"checkbox",name:"linhaOpt",value:v}); box.append(h("label",null,inp,h("span",null,v))); }
+  if(checked) inp.checked=true; return inp;
+}
+LINHAS.forEach(l=>addLinhaChip(l,false));
+function filterLinhas(){ const q=norm($("#p-linha-f").value); $("#opt-linha").querySelectorAll("label").forEach(l=>{ const i=l.querySelector("input"); l.hidden=!!q && !norm(i.value).includes(q) && !i.checked; }); }
+$("#p-linha-f").addEventListener("input",filterLinhas);
+$("#p-linha-add").addEventListener("click",()=>{ const v=$("#p-linha-new").value.trim(); if(!v) return; addLinhaChip(v,true); $("#p-linha-new").value=""; $("#p-linha-f").value=""; filterLinhas(); });
+$("#p-linha-new").addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); $("#p-linha-add").click(); } });
+function linhasOf(e){ return (Array.isArray(e.linhas)?e.linhas:String(e.linha||"").split(/\s*[,;]\s*/)).map(x=>String(x).trim()).filter(Boolean); }
 SETORES.forEach((s,i)=>$("#opt-setor").append(h("label",null,h("input",{type:"radio",name:"setor",value:s.id,required:i===0}),h("span",null,s.curto))));
 TEMPOS.forEach(t=>$("#opt-tempo").append(h("label",null,h("input",{type:"radio",name:"tempo",value:t}),h("span",null,t))));
 DIFICULDADES.forEach(d=>$("#opt-dif").append(h("label",null,h("input",{type:"checkbox",name:"dif",value:d}),h("span",null,d))));
@@ -761,6 +781,8 @@ function renderStats(){
   const ca=countBy(L,e=>e.trabalhaArea); bars($("#s-areabar"), Object.entries(AREA).map(([k,v])=>[v,ca[k]||0]), "var(--v3)");
   const cp=countBy(L,e=>e.programa); bars($("#s-prog-bars"), PROGRAMS.map(p=>[p.sig,cp[p.id]||0]).sort((a,b)=>b[1]-a[1]), "var(--v3)");
   const cd=countBy(L,e=>e.ano?Math.floor(e.ano/10)*10:null); bars($("#s-ano"), Object.keys(cd).sort().map(d=>[d+"s",cd[d]]), "var(--v2)");
+  const lc={}; L.forEach(e=>linhasOf(e).forEach(x=>lc[x]=(lc[x]||0)+1));
+  bars($("#s-linhas"), Object.entries(lc).sort((a,b)=>b[1]-a[1]).slice(0,15), "var(--v4)");
   const qs=$("#s-quotes"); qs.replaceChildren();
   const texts=L.filter(e=>e.dificuldadesTexto).sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0)).slice(0,8);
   if(!texts.length) qs.append(h("p",{class:"status"},"Nenhum relato ainda."));
@@ -911,7 +933,7 @@ let filledFor=null;
 function fillProfileForm(){
   const e=myProfile(); $("#p-del").hidden=!e; if(!e || filledFor===e.updatedAt) return; filledFor=e.updatedAt;
   $("#p-nome").value=e.nome||""; $("#p-prog").value=e.programa||""; setRadio("nivel",e.nivel); $("#p-ano").value=e.ano||"";
-  $("#p-orient").value=e.orientador||""; $("#p-titulo").value=e.titulo||""; $("#p-linha").value=e.linha||"";
+  $("#p-orient").value=e.orientador||""; $("#p-titulo").value=e.titulo||""; $("#opt-linha").querySelectorAll("input").forEach(x=>x.checked=false); linhasOf(e).forEach(v=>addLinhaChip(v,true)); filterLinhas();
   const l=loc(e);
   setRadio("resideBR", l.ex?"nao":"sim"); $("#br-box").hidden=l.ex; $("#ex-box").hidden=!l.ex;
   if(!l.ex && l.cidade && l.lat!=null){ state.citySel={cidade:l.cidade,uf:l.uf,lat:l.lat,lon:l.lon}; cq.value=`${l.cidade} – ${l.uf}`; $("#p-city-picked").textContent=`✓ ${l.cidade}, ${UF_NAMES[l.uf]||l.uf}`; }
@@ -929,7 +951,8 @@ form.addEventListener("submit",async ev=>{
   const f=form.elements, br=f.resideBR.value==="sim";
   const data={
     nome:$("#p-nome").value.trim(), programa:$("#p-prog").value, nivel:f.nivel.value, ano:parseInt($("#p-ano").value,10)||null,
-    orientador:$("#p-orient").value.trim(), titulo:$("#p-titulo").value.trim(), linha:$("#p-linha").value.trim(),
+    orientador:$("#p-orient").value.trim(), titulo:$("#p-titulo").value.trim(), linhas:[...form.querySelectorAll("input[name=linhaOpt]:checked")].map(x=>x.value).slice(0,12),
+    linha:[...form.querySelectorAll("input[name=linhaOpt]:checked")].map(x=>x.value).slice(0,12).join(", ").slice(0,600),
     resideBR:f.resideBR.value,
     cidade: br&&state.citySel? state.citySel.cidade : "", uf: br&&state.citySel? state.citySel.uf : "EX",
     lat: br&&state.citySel? state.citySel.lat : null, lon: br&&state.citySel? state.citySel.lon : null,

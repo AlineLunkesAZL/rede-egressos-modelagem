@@ -21,7 +21,9 @@ service cloud.firestore {
         && str(request.resource.data.nome, 120)
         && str(request.resource.data.orientador, 160)
         && str(request.resource.data.titulo, 300)
-        && str(request.resource.data.linha, 200)
+        && str(request.resource.data.linha, 600)
+        && request.resource.data.linhas is list
+        && request.resource.data.linhas.size() <= 12
         && str(request.resource.data.linhaAtual, 200)
         && str(request.resource.data.dificuldadesTexto, 1500)
         && str(request.resource.data.link, 300)
