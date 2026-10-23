@@ -1,16 +1,15 @@
-// 1) Cole aqui a configuração do seu projeto Firebase
-//    (Console do Firebase > Configurações do projeto > Seus apps > App da Web > Configuração do SDK)
+// Configuração do projeto Firebase "rede-egressos-modelagem"
 window.FIREBASE_CONFIG = {
-  apiKey: "COLE_AQUI_SUA_API_KEY",
-  authDomain: "seu-projeto.firebaseapp.com",
-  projectId: "seu-projeto",
-  storageBucket: "seu-projeto.appspot.com",
-  messagingSenderId: "000000000000",
-  appId: "1:000000000000:web:0000000000000000"
+  apiKey: "AIzaSyCfWJILHjlvnxV3oBZIoMpT_sx8z8vMItM",
+  authDomain: "rede-egressos-modelagem.firebaseapp.com",
+  projectId: "rede-egressos-modelagem",
+  storageBucket: "rede-egressos-modelagem.firebasestorage.app",
+  messagingSenderId: "178920282951",
+  appId: "1:178920282951:web:fd9cbf5af0c3985f27ca62"
 };
 
-// 2) E-mails de quem pode moderar o fórum (apagar tópicos e perfis de outras pessoas).
-//    Use os mesmos e-mails no arquivo firestore.rules.
+// E-mails de quem pode moderar o fórum e baixar a planilha (CSV).
+// Use os mesmos e-mails das regras do Firestore.
 window.ADMIN_EMAILS = [
-  "coordenacao@exemplo.br"
+  "alinelunkesazl@gmail.com"
 ];
