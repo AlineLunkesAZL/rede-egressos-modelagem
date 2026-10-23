@@ -1,0 +1,55 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+
+    // Troque pelos e-mails da coordenação/moderação (os mesmos de firebase-config.js)
+    function isAdmin() {
+      return signedIn() && request.auth.token.email in ['coordenacao@exemplo.br'];
+    }
+
+    function str(v, max) { return v is string && v.size() <= max; }
+
+    // Perfis de egressos: só quem entrou com conta Google lê;
+    // cada pessoa cria e edita apenas o próprio perfil (id do documento = id da conta).
+    match /egressos/{uid} {
+      allow read: if signedIn();
+      allow create, update: if signedIn()
+        && request.auth.uid == uid
+        && request.resource.data.authorId == uid
+        && str(request.resource.data.nome, 120)
+        && str(request.resource.data.orientador, 160)
+        && str(request.resource.data.titulo, 300)
+        && str(request.resource.data.linha, 200)
+        && str(request.resource.data.linhaAtual, 200)
+        && str(request.resource.data.dificuldadesTexto, 1500)
+        && str(request.resource.data.link, 300)
+        && request.resource.data.dificuldades is list
+        && request.resource.data.dificuldades.size() <= 12
+        && request.resource.data.keys().size() <= 40;
+      allow delete: if signedIn() && (request.auth.uid == uid || isAdmin());
+    }
+
+    // Fórum
+    match /topicos/{topicoId} {
+      allow read: if signedIn();
+      allow create: if signedIn()
+        && request.resource.data.authorId == request.auth.uid
+        && str(request.resource.data.title, 140)
+        && str(request.resource.data.body, 6000)
+        && str(request.resource.data.cat, 60);
+      allow update: if false;
+      allow delete: if signedIn() && (resource.data.authorId == request.auth.uid || isAdmin());
+
+      match /respostas/{respostaId} {
+        allow read: if signedIn();
+        allow create: if signedIn()
+          && request.resource.data.authorId == request.auth.uid
+          && str(request.resource.data.body, 4000);
+        allow update: if false;
+        allow delete: if signedIn() && (resource.data.authorId == request.auth.uid || isAdmin());
+      }
+    }
+  }
+}
