@@ -194,6 +194,23 @@ tr:last-child td{border-bottom:none}
 .bar span{display:block;height:100%}
 .quotes p{font-family:var(--serif);border-left:3px solid var(--line);padding-left:10px;margin:10px 0;font-size:.95rem}
 
+.vagas-layout{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:20px;align-items:start}
+.vagas{display:grid;gap:12px}
+.vaga{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--vt,var(--v3));border-radius:4px;padding:14px 16px;display:flex;flex-direction:column;gap:6px}
+.vaga.enc{opacity:.6}
+.vaga h3{margin:0;font-size:1.12rem}
+.vaga .meta{font-size:.88rem;color:var(--muted)}
+.vaga .row{font-size:.92rem}
+.vaga .row b{font-weight:600;color:var(--muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.04em;margin-right:4px}
+.vaga .desc{font-family:var(--serif);margin:2px 0;white-space:pre-wrap}
+.tag.vt{border-color:var(--vt);color:var(--ink);font-weight:600}
+.vaga-foot{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:4px}
+.vaga-foot .status{flex:1;font-size:.82rem}
+a.btn{text-decoration:none;display:inline-block}
+.fontes{list-style:none;margin:0;padding:0}
+.fontes li{padding:6px 0;border-bottom:1px solid var(--line);font-size:.92rem}
+.fontes li:last-child{border-bottom:none}
+@media (max-width:860px){.vagas-layout{grid-template-columns:1fr}}
 footer{border-top:1px solid var(--line);padding:20px 0 40px;color:var(--muted);font-size:.88rem}
 
 @media (max-width:860px){
@@ -229,6 +246,7 @@ footer{border-top:1px solid var(--line);padding:20px 0 40px;color:var(--muted);f
   <div class="wrap" role="tablist">
     <button role="tab" data-tab="egressos" aria-selected="true">Egressos</button>
     <button role="tab" data-tab="forum" aria-selected="false">Fórum</button>
+    <button role="tab" data-tab="vagas" aria-selected="false">Oportunidades</button>
     <button role="tab" data-tab="painel" aria-selected="false">Painel</button>
     <button role="tab" data-tab="programas" aria-selected="false">Programas</button>
     <button role="tab" data-tab="cadastro" aria-selected="false">Meu cadastro</button>
@@ -291,6 +309,37 @@ footer{border-top:1px solid var(--line);padding:20px 0 40px;color:var(--muted);f
         </form>
       </div>
       <div class="card thread" id="thread"><p class="status">Escolha um tópico para ler a conversa.</p></div>
+    </div>
+  </section>
+
+  <!-- OPORTUNIDADES -->
+  <section class="panel" id="tab-vagas" hidden>
+    <h2>Oportunidades</h2>
+    <p class="lead">Bolsas de pesquisa, pós-doutorado, concursos, vagas na indústria e editais. Qualquer pessoa da rede pode divulgar.</p>
+    <div class="vagas-layout">
+      <div>
+        <div class="filters">
+          <input id="v-q" type="search" placeholder="Buscar: título, instituição, cidade…" aria-label="Buscar oportunidades">
+          <select id="v-tipo-f" aria-label="Tipo de oportunidade"></select>
+          <label class="check"><input type="checkbox" id="v-old"> Mostrar encerradas</label>
+        </div>
+        <div class="status" id="v-count" style="margin:0 0 10px"></div>
+        <div id="vagas-list" class="vagas"></div>
+      </div>
+      <div class="side-stack">
+        <form class="card" id="vaga-form" novalidate>
+          <h3 style="margin:0 0 12px">Divulgar uma oportunidade</h3>
+          <div class="field"><label for="v-tipo">Tipo</label><select id="v-tipo" required></select></div>
+          <div class="field"><label for="v-titulo">Título</label><input id="v-titulo" maxlength="160" required placeholder="ex.: Bolsa DTI em modelagem de reservatórios"></div>
+          <div class="field"><label for="v-inst">Instituição ou empresa</label><input id="v-inst" maxlength="140"></div>
+          <div class="field"><label for="v-local">Local</label><input id="v-local" maxlength="100" placeholder="Cidade/UF, remoto ou país"></div>
+          <div class="field"><label for="v-prazo">Inscrições até</label><input id="v-prazo" type="date"></div>
+          <div class="field"><label for="v-link">Link do edital ou da vaga</label><input id="v-link" type="url" maxlength="400" placeholder="https://"></div>
+          <div class="field"><label for="v-desc">Detalhes (opcional)</label><textarea id="v-desc" maxlength="2000" placeholder="Requisitos, valor da bolsa, duração, contato…"></textarea></div>
+          <div class="cta-row" style="align-items:center"><button class="btn" type="submit">Publicar</button><span class="status" id="v-status"></span></div>
+        </form>
+        <div class="card"><h3 style="margin:0 0 6px">Onde procurar</h3><ul class="fontes" id="fontes"></ul></div>
+      </div>
     </div>
   </section>
 
@@ -538,7 +587,7 @@ function showTab(name){
   document.querySelectorAll("nav.tabs [data-tab]").forEach(b=>b.setAttribute("aria-selected", String(b.dataset.tab===name)));
   document.querySelectorAll("section.panel").forEach(s=>s.hidden = s.id!=="tab-"+name);
   try{ localStorage.setItem("rede-egressos-tab",name);}catch(e){}
-  if(name==="cadastro" || name==="egressos" || name==="forum" || name==="painel" || name==="programas"){ try{ history.replaceState(null,"","#"+name);}catch(e){} }
+  if($("#tab-"+name)){ try{ history.replaceState(null,"","#"+name);}catch(e){} }
 }
 document.querySelectorAll("nav.tabs [data-tab]").forEach(b=>b.addEventListener("click",()=>showTab(b.dataset.tab)));
 document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>{showTab(b.dataset.go); $("nav.tabs").scrollIntoView({behavior:"smooth"});}));
@@ -805,7 +854,7 @@ $("#csv-btn").addEventListener("click",()=>{
   const a=h("a",{href:URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"})),download:"egressos-modelagem.csv"}); document.body.append(a); a.click(); a.remove();
 });
 
-function renderAll(){ heroMap.redraw(); progMap.redraw(); renderKpis(); renderPeople(); renderPrograms(); renderStats(); }
+function renderAll(){ heroMap.redraw(); progMap.redraw(); renderKpis(); renderPeople(); renderPrograms(); renderStats(); renderVagas(); }
 
 /* ================= FORUM ================= */
 function renderCats(){
@@ -817,7 +866,7 @@ async function resolveNames(ids){
   if(state.backend!=="claude"||!state.user) return;
   const need=[...new Set(ids)].filter(id=>id && !state.names[id] && !state.egressos.some(e=>e.authorId===id));
   if(!need.length) return;
-  try{ const ps=await state.user.profiles(need); let got=false; need.forEach(id=>{ const n=ps&&ps[id]&&ps[id].name; if(n){ state.names[id]=n; got=true; } }); if(got){ renderTopics(); renderThread(); } }catch(e){}
+  try{ const ps=await state.user.profiles(need); let got=false; need.forEach(id=>{ const n=ps&&ps[id]&&ps[id].name; if(n){ state.names[id]=n; got=true; } }); if(got){ renderTopics(); renderThread(); renderVagas(); } }catch(e){}
 }
 function renderTopics(){
   const ul=$("#topics"); ul.replaceChildren(); const q=norm($("#t-q").value);
@@ -867,6 +916,74 @@ $("#new-topic").addEventListener("submit",async ev=>{
   st.textContent="Publicando…";
   try{ const ref=await state.db.collection("topicos").add({title,body,cat,authorId:state.uid,authorName:state.backend==="firebase"?state.displayName:"",createdAt:Date.now()});
     $("#nt-title").value=""; $("#nt-body").value=""; st.textContent="Publicado."; openTopic(ref.id); }
+  catch(e){ st.textContent=errMsg(e,"Não foi possível publicar. Tente de novo."); }
+});
+
+/* ================= OPORTUNIDADES ================= */
+const VAGA_TIPOS=[["bolsa","Bolsa de pesquisa","var(--v3)"],["posdoc","Pós-doutorado","var(--v2)"],["docente","Concurso docente","var(--v1)"],["concurso","Concurso público","#8F6A12"],["industria","Emprego na indústria/empresa","var(--accent)"],["estagio","Estágio ou trainee","var(--v4)"],["edital","Edital ou chamada","#7A5C99"],["outro","Outro","var(--muted)"]];
+const VT=Object.fromEntries(VAGA_TIPOS.map(([id,n,c])=>[id,{n,c}]));
+const FONTES=[
+  ["CNPq","https://www.gov.br/cnpq/pt-br","chamadas e bolsas de pesquisa"],
+  ["CAPES","https://www.gov.br/capes/pt-br","editais e programas de pós-doc"],
+  ["FAPESP – Oportunidades","https://fapesp.br/oportunidades","bolsas de pós-doc e TT em SP"],
+  ["FAPERJ","https://www.faperj.br","bolsas e editais no RJ"],
+  ["FAPEMIG","https://fapemig.br","bolsas e editais em MG"],
+  ["FAPESB","https://www.fapesb.ba.gov.br","bolsas e editais na BA"],
+  ["FAPERGS","https://fapergs.rs.gov.br","bolsas e editais no RS"],
+  ["PCI Concursos","https://www.pciconcursos.com.br","concursos públicos e para docente"],
+  ["Diário Oficial da União","https://www.in.gov.br","editais de concursos federais"],
+  ["EURAXESS","https://euraxess.ec.europa.eu","vagas de pesquisa na Europa"]
+];
+fillSelect($("#v-tipo-f"), VAGA_TIPOS.map(t=>[t[0],t[1]]), "Todos os tipos");
+fillSelect($("#v-tipo"), VAGA_TIPOS.map(t=>[t[0],t[1]]), "Selecione");
+["#v-q","#v-tipo-f","#v-old"].forEach(s=>$(s).addEventListener("input",renderVagas));
+FONTES.forEach(([n,u,d])=>$("#fontes").append(h("li",null,h("a",{href:u,target:"_blank",rel:"noopener noreferrer"},n),h("span",{class:"status"}," – "+d))));
+function todayStr(){ const d=new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+function fmtPrazo(s){ try{ const [y,m,d]=s.split("-").map(Number); return new Date(y,m-1,d).toLocaleDateString("pt-BR",{day:"2-digit",month:"short",year:"numeric"}); }catch(e){ return s; } }
+function renderVagas(){
+  const box=$("#vagas-list"); if(!box) return; box.replaceChildren();
+  const all=state.vagas||[], t=todayStr(), q=norm($("#v-q").value), ft=$("#v-tipo-f").value, old=$("#v-old").checked;
+  const isEnc=v=>!!(v.prazo && v.prazo<t);
+  const L=all.filter(v=>{
+    if(ft && v.tipo!==ft) return false;
+    if(isEnc(v) && !old) return false;
+    if(q && !norm([v.titulo,v.instituicao,v.local,v.descricao,(VT[v.tipo]||{}).n].join(" ")).includes(q)) return false;
+    return true;
+  }).sort((a,b)=>{
+    const ea=isEnc(a), eb=isEnc(b); if(ea!==eb) return ea?1:-1;
+    if(!ea && a.prazo && b.prazo) return a.prazo.localeCompare(b.prazo);
+    if(a.prazo && !b.prazo) return -1; if(!a.prazo && b.prazo) return 1;
+    return (b.createdAt||0)-(a.createdAt||0);
+  });
+  const abertas=all.filter(v=>!isEnc(v)).length;
+  $("#v-count").textContent=`${abertas} ${abertas===1?"oportunidade aberta":"oportunidades abertas"}`;
+  if(!L.length){ box.append(h("div",{class:"empty"}, all.length? "Nenhuma oportunidade com esses filtros." : (state.db? "Nenhuma oportunidade divulgada ainda. Compartilhe a primeira vaga, bolsa ou concurso." : "Entre com sua conta para ver as oportunidades."))); return; }
+  L.forEach(v=>{
+    const tp=VT[v.tipo]||VT.outro, url=safeUrl(v.link||""), enc=isEnc(v);
+    let dias=null; if(v.prazo && !enc){ const [y,m,d]=v.prazo.split("-").map(Number); dias=Math.round((new Date(y,m-1,d)-new Date(new Date().toDateString()))/864e5); }
+    box.append(h("article",{class:"vaga"+(enc?" enc":""),style:`--vt:${tp.c}`},
+      h("div",null, h("span",{class:"tag vt"},tp.n), enc? h("span",{class:"tag"},"Encerrada"):null,
+        (dias!=null && dias<=7)? h("span",{class:"tag warn"}, dias===0?"Último dia":`Faltam ${dias} dia${dias>1?"s":""}`):null),
+      h("h3",null,v.titulo),
+      (v.instituicao||v.local)? h("div",{class:"meta"},[v.instituicao,v.local].filter(Boolean).join(" · ")):null,
+      h("div",{class:"row"},h("b",null,"Inscrições até"), v.prazo? fmtPrazo(v.prazo) : "não informado"),
+      v.descricao? h("p",{class:"desc"},v.descricao):null,
+      h("div",{class:"vaga-foot"},
+        url? h("a",{class:"btn small",href:url,target:"_blank",rel:"noopener noreferrer"},"Ver edital / vaga"):null,
+        h("span",{class:"status"},`Divulgado por ${authorName(v.authorId,v.authorName)} em ${fmtDate(v.createdAt)}`),
+        canDelete(v.authorId)? h("button",{class:"btn small danger",type:"button",onclick:async()=>{ if(!confirm("Remover esta oportunidade?")) return; try{ await state.db.doc(`vagas/${v._id}`).delete(); }catch(e){ alert("Não foi possível remover."); } }},"Remover"):null)
+    ));
+  });
+  resolveNames(L.map(v=>v.authorId));
+}
+$("#vaga-form").addEventListener("submit",async ev=>{
+  ev.preventDefault(); const st=$("#v-status");
+  const data={tipo:$("#v-tipo").value, titulo:$("#v-titulo").value.trim(), instituicao:$("#v-inst").value.trim(), local:$("#v-local").value.trim(), prazo:$("#v-prazo").value||"", link:$("#v-link").value.trim(), descricao:$("#v-desc").value.trim()};
+  if(!data.tipo || !data.titulo){ st.textContent="Escolha o tipo e escreva um título."; return; }
+  if(data.link && !safeUrl(data.link)){ st.textContent="O link precisa começar com https://"; return; }
+  if(!state.db || !state.uid){ st.textContent="Entre com sua conta para divulgar."; return; }
+  st.textContent="Publicando…";
+  try{ await state.db.collection("vagas").add({...data, authorId:state.uid, authorName:state.backend==="firebase"?state.displayName:"", createdAt:Date.now()}); $("#vaga-form").reset(); st.textContent="Publicado. Obrigado por compartilhar!"; }
   catch(e){ st.textContent=errMsg(e,"Não foi possível publicar. Tente de novo."); }
 });
 
@@ -982,6 +1099,9 @@ function subscribeData(){
   state.unsubs.push(state.db.collection("egressos").limit(2000).onSnapshot(snap=>{
     state.egressos=snap.docs.map(d=>({_id:d.id,...d.data()})); renderAll(); renderTopics(); renderThread(); fillProfileForm();
   },()=>{ conn.hidden=false; conn.textContent="Não foi possível carregar os egressos. Recarregue a página."; }));
+  state.unsubs.push(state.db.collection("vagas").orderBy("createdAt","desc").limit(300).onSnapshot(snap=>{
+    state.vagas=snap.docs.map(d=>({_id:d.id,...d.data()})); renderVagas();
+  },()=>{}));
   state.unsubs.push(state.db.collection("topicos").orderBy("createdAt","desc").limit(300).onSnapshot(snap=>{
     state.topicos=snap.docs.map(d=>({_id:d.id,...d.data()})); renderTopics(); renderThread();
   },()=>{}));
@@ -1024,7 +1144,7 @@ async function boot(){
     state.isOwner=!!(u && (window.ADMIN_EMAILS||[]).map(x=>String(x).toLowerCase()).includes(String(u.email||"").toLowerCase()));
     filledFor=null; renderAuth();
     if(!u){
-      state.egressos=[]; state.topicos=[]; state.openTopic=null; state.replies=[];
+      state.egressos=[]; state.topicos=[]; state.vagas=[]; state.openTopic=null; state.replies=[];
       renderAll(); renderTopics(); renderThread();
       conn.hidden=false; conn.textContent="Entre com sua conta Google (botão no menu) para ver os egressos, participar do fórum e fazer seu cadastro.";
       return;
