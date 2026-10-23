@@ -452,6 +452,8 @@ const PROGRAMS = [
   {id:"ufrrj",  sig:"UFRRJ",         nome:"Modelagem Matemática e Computacional",             cidade:"Seropédica",    uf:"RJ", lat:-22.76, lon:-43.69},
   {id:"ufjf",   sig:"UFJF",          nome:"Modelagem Computacional",                          cidade:"Juiz de Fora",  uf:"MG", lat:-21.76, lon:-43.35},
   {id:"cefetmg",sig:"CEFET-MG",      nome:"Modelagem Matemática e Computacional",             cidade:"Belo Horizonte",uf:"MG", lat:-19.92, lon:-43.94},
+  {id:"unimontes",sig:"UNIMONTES",   nome:"Modelagem Computacional e Sistemas (mestrado profissional)", cidade:"Montes Claros", uf:"MG", lat:-16.73, lon:-43.86},
+  {id:"uneb",   sig:"UNEB",          nome:"Modelagem e Simulação de Biossistemas",           cidade:"Alagoinhas",    uf:"BA", lat:-12.14, lon:-38.42},
   {id:"furg",   sig:"FURG",          nome:"Modelagem Computacional",                          cidade:"Rio Grande",    uf:"RS", lat:-32.03, lon:-52.10},
   {id:"unijui", sig:"UNIJUÍ",        nome:"Modelagem Matemática e Computacional",             cidade:"Ijuí",          uf:"RS", lat:-28.39, lon:-53.91},
   {id:"uesc",   sig:"UESC",          nome:"Modelagem Computacional em Ciência e Tecnologia",  cidade:"Ilhéus",        uf:"BA", lat:-14.79, lon:-39.17},
@@ -604,7 +606,7 @@ function drawStates(g, k, fillFor, onClick, titleFor){
 }
 
 /* ---------- programs map ---------- */
-const SPREAD={ufjf:[472,392,"start"],uerj:[502,420,"start"],lncc:[482,450,"start"],ufrrj:[456,480,"start"],cefetmg:[429,382,"end"]};
+const SPREAD={ufjf:[472,392,"start"],uerj:[502,420,"start"],lncc:[482,450,"start"],ufrrj:[456,480,"start"],cefetmg:[429,382,"end"],uneb:[530,256,"end"]};
 const geo = PROGRAMS.filter(p=>p.lat!=null);
 geo.forEach(p=>{ [p.tx,p.ty]=proj(p.lon,p.lat); const s=SPREAD[p.id]; p.x=s?s[0]:p.tx; p.y=s?s[1]:p.ty; p.anchor=s?s[2]:(p.tx>360?"end":"start"); });
 const edges=new Set();
